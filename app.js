@@ -8,6 +8,7 @@ const cors = require('cors');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const apiBdayRouter = require('./routes/api/v1/bday');
+const passport = require('./passport/passport')
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/bdayapp', {
@@ -29,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('api/v1/bday', apiBdayRouter);
+app.use('api/v1/bday', passport.authenticate('jwt', { session: false }), apiBdayRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
