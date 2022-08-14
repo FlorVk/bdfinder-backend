@@ -6,7 +6,12 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const apiBdayRouter = require('./routes/api/v1/bday')
+const apiBdayRouter = require('./routes/api/v1/bday');
+
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://127.0.0.1:27017/bdayapp', {
+  useNewUrlParser: true
+});
 
 const app = express();
 

@@ -1,6 +1,7 @@
+const Bday = require('../../../models/Bday');
 
 const getAll = (req, res) => {
-    bday.find({"user" : req.user.birthday}, (err, docs) => {
+    bday.find({"bday" : "25-11-1998"}, (err, docs) => {
         if(!err){
             res.json({
                 "status": "success",
