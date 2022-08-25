@@ -13,4 +13,20 @@ const getAll = (req, res) => {
     });
 }
 
+const getBirthdays = (req, res) => {
+    let dateObj = req.user.birthday;
+    let birthday = dateObj.toString();
+    res.render(
+        "birthday",
+        {
+            id: req.params.birthday
+        },
+        {
+            user: req.user.username,
+            birthday: birthday,
+        }
+    );
+}
+
 module.exports.getAll = getAll;
+module.exports.getBirthdays = getBirthdays;

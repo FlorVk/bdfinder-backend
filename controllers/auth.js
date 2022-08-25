@@ -4,9 +4,11 @@ const jwt = require('jsonwebtoken');
 const signup = async (req, res, next) => {
     let username = req.body.username;
     let password = req.body.password;
+    let birthday = req.body.birthday;
 
     const user = new User({
-        username: username
+        username: username,
+        birthday: birthday
     });
 
     await user.setPassword(password);
