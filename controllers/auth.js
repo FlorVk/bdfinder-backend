@@ -1,63 +1,126 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
 const signup = async (req, res, next) => {
-    let username = req.body.username;
-    let password = req.body.password;
-    let birthday = req.body.birthday;
+  let username = req.body.username;
+  let password = req.body.password;
+  let birthday = Date.parse(req.body.birthday);
 
-    const user = new User({
-        username: username,
-        birthday: birthday
-    });
+  const userCredentials = {
+    username: username,
+    password: password,
+    birthday: birthday,
+  };
+  console.log(userCredentials);
 
-    await user.setPassword(password);
-    await user.save().then(result => {
-        let token = jwt.sign({
-            uid: result._id,
-            username: result.username
-        }, "Secret");
+  const user = new User({
+    username: username,
+    birthday: birthday,
+  });
 
-        res.json({
-            "status": "success",
-            "data": {
-                "token": token
-            }
-        })
-    }).catch(error => {
-        res.json({
-            "status": "error"
-        })
+  console.log(user);
+
+  await user.setPassword(password);
+  await user
+    .save()
+    .then((result) => {
+      let token = jwt.sign(
+        {
+          uid: result._id,
+          username: result.username,
+        },
+        "Secret"
+      );
+
+      res.json({
+        status: "success",
+        data: {
+          token: token,
+        },
+      });
+    })
+    .catch((error) => {
+      res.json({
+        status: "error",
+      });
     });
 };
 
 const login = async (req, res, next) => {
-    const user = await User.authenticate()(req.body.username, req.body.password).then(result => {
-        if(!result.user){
-            res.json({
-                "status": "failed",
-                "message": "Failed to login!"
-            })
-        }
-
-        let token = jwt.sign({
-            uid: result.user._id,
-            username: result.user.username
-        }, "Secret");
-
-        return res.json({
-            "status": "success",
-            "data": {
-                "token": token
-            }
-        });
-    }).catch(error => {
+  const user = await User.authenticate()(req.body.username, req.body.password)
+    .then((result) => {
+      if (!result.user) {
         res.json({
-            "status": "error",
-            "message": error
+          status: "failed",
+          message: "Failed to login!",
         });
+      }
+
+      let token = jwt.sign(
+        {
+          uid: result.user._id,
+          username: result.user.username,
+        },
+        "Secret"
+      );
+
+      return res.json({
+        status: "success",
+        data: {
+          token: token,
+        },
+      });
+    })
+    .catch((error) => {
+      res.json({
+        status: "error",
+        message: error,
+      });
     });
+};
+
+const getAllUsers = async (req, res, next) => {
+  const users = await User.find({})
+    .then((result) => {
+      return res.json({
+        status: "success",
+        data: result,
+      });
+    })
+
+    .catch((error) => {
+      res.json({
+        status: "error",
+        message: error,
+      });
+    });
+};
+
+const getAllUsersWithBirthday = async (req, res, next) => {
+  let reqBirthday = Date.parse(req.body.birthday);
+  console.log(reqBirthday);
+  const users = await User.find({ birthday: reqBirthday })
+    .then((result) => {
+      return res.json({
+        status: "success",
+        data: result,
+      });
+    })
+    .catch((error) => {
+      res.json({
+        status: "error",
+        message: error,
+      });
+    });
+};
+
+const getBirthdays = async (req, res, next) => {
+  let dateObj = req.params.birthday;
+  console.log(dateObj);
 };
 
 module.exports.signup = signup;
 module.exports.login = login;
+module.exports.getAllUsers = getAllUsers;
+module.exports.getAllUsersWithBirthday = getAllUsersWithBirthday;
+module.exports.getBirthdays = getBirthdays;

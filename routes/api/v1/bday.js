@@ -1,9 +1,7 @@
-const express = require('express')
-const router = express.Router();
-const bdayController =  require('../../../controllers/api/v1/bday')
+var express = require("express");
+var router = express.Router();
+const bdayController = require("../../../controllers/api/v1/bday");
 
-
-router.get('/:birthday', bdayController.getBirthdays);
-
+router.get("/:birthday", bdayController.getBirthdayUsers);
 
 module.exports = router;
