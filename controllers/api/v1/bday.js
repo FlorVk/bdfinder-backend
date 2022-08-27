@@ -1,4 +1,4 @@
-const User = require("../../../models/User");
+const User = require("../../../models/UserModel");
 
 const getBirthdayUsers = (req, res) => {
   const date = req.params.birthday;

@@ -1,0 +1,102 @@
+extends layout
+
+block content
+  block content
+  script(src='/primus/primus.js')
+  .chatbox
+    .chatbox__header
+        p.chatbox__header__title#user #{user}
+        - var currentTime = new Date().toLocaleTimeString();
+        p.chatbox__header__title--aside #{currentTime}
+    .chatbox__body#chatHistory
+    .chatbox__footer 
+        input#message.chatbox__footer__input(type='text', name='message', placeholder='Type your message here...')
+        img.chatbox__footer__button(src="https://cdn-icons-png.flaticon.com/512/3682/3682321.png", alt="alt", onclick='writeMessage()')
+  div
+    
+
+  script.
+    function createMessageElement(data) {
+        const userName = document.getElementById('user').innerText.toUpperCase();
+        const chatBubble = document.createElement('div')
+        chatBubble.className = `chatbox__body__chatBubble ${data.username.toUpperCase() === userName ? 'chatbox__body__chatBubble--right' : 'chatbox__body__chatBubble--left'}`
+
+        const chatHeader = document.createElement('div')
+        chatHeader.className = 'chatbox__body__chatBubble__header'
+        const chatBody = document.createElement('div')
+        chatBody.className = 'chatbox__body__chatBubble__body'
+
+        const user = document.createElement('p')
+        user.className = 'chatbox__body__chatBubble__header__title capitalize'
+        const time = document.createElement('p')
+        time.className = 'chatbox__body__chatBubble__header__title--aside'
+        const message = document.createElement('p')
+        message.className = 'chatbox__body__chatBubble__body__message'
+
+        user.innerText = data.username
+        time.innerText = new Date(data.timestamp).toLocaleTimeString()
+        message.innerText = data.message
+
+        chatHeader.appendChild(user)
+        chatHeader.appendChild(time)
+        chatBody.appendChild(message)
+
+        chatBubble.appendChild(chatHeader)
+        chatBubble.appendChild(chatBody)
+
+        return chatBubble
+    }
+
+    const primus = Primus.connect()
+    primus.on('open', () => {
+      console.log('primus open')
+      primus.write({reason: 'syncChatRequest'})
+    })
+
+    const sendInput = document.getElementById('message')
+    sendInput.addEventListener("keydown", function (e) {
+        if (e.code === "Enter") {  //checks whether the pressed key is "Enter"
+            writeMessage()
+        }
+    });
+
+    function writeMessage() {
+      const message = document.getElementById('message').value
+      if (message.length < 1) return
+      const data = {message: message, username: 'flor', timestamp: new Date()}
+      primus.write({
+        data: data,
+        reason: 'sendMessage'
+      })
+    }
+
+    primus.on('data', function (data) {
+        switch (data.reason) {
+            case 'syncChatResponse':
+                syncChatHistory(data.data)
+                break;
+            case 'sendMessageResponse':
+                updateChatHistory(data.data)
+                break;
+            default:
+                console.log('unknown reason', reason)
+                break;
+        }
+    })
+
+    function syncChatHistory(chatHistory = []) {
+        const historyEl = document.getElementById('chatHistory')
+        historyEl.innerHtml = ''
+        chatHistory.forEach(function (message) {
+            historyEl.appendChild(createMessageElement(message))
+        })
+        setTimeout(function () {
+            historyEl.scrollTop = historyEl.scrollHeight
+        } , 100)
+    }
+
+    function updateChatHistory(lastMessage = {message: 'message not found'}) {
+        const historyEl = document.getElementById('chatHistory')
+        historyEl.appendChild(createMessageElement(lastMessage));
+        historyEl.scrollTop = historyEl.scrollHeight;
+    }

@@ -1,5 +1,5 @@
 const passport = require('passport');
-const User = require('../models/User');
+const User = require('../models/UserModel');
 
 // CHANGE: USE "createStrategy" INSTEAD OF "authenticate"
 passport.use(User.createStrategy());

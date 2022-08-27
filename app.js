@@ -5,9 +5,10 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
 
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
+const indexRouter = require("./routes/indexRoute");
+const usersRouter = require("./routes/usersRoute");
 const apiBdayRouter = require("./routes/api/v1/bday");
+const chatRouter = require("./routes/chatRoute");
 const passport = require("./passport/passport");
 
 const mongoose = require("mongoose");
@@ -41,6 +42,7 @@ app.use(
   passport.authenticate("jwt", { session: false }),
   apiBdayRouter
 );
+app.use("/chat", chatRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
