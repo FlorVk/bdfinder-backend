@@ -15,7 +15,7 @@ const config = require('config');
 const mongoose = require("mongoose");
 try {
   mongoose.connect(
-    config.get('Database.conn'),
+    process.env.dbconn || config.get('Database.conn'),
     { useNewUrlParser: true, useUnifiedTopology: true },
     () => console.log(" Mongoose is connected")
   );
