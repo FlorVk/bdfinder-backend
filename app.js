@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
 
-const indexRouter = require("./routes/indexRoute");
+//const indexRouter = require("./routes/indexRoute");
 const usersRouter = require("./routes/usersRoute");
 const apiBdayRouter = require("./routes/api/v1/bday");
 const chatRouter = require("./routes/chatRoute");
@@ -35,13 +35,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors());
-app.use("/", indexRouter);
+//app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use(
   "/api/v1/bday",
   passport.authenticate("jwt", { session: false }),
   apiBdayRouter
 );
+app.use("/auth", usersRouter);
 app.use("/chat", chatRouter);
 
 // catch 404 and forward to error handler

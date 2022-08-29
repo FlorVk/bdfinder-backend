@@ -119,8 +119,22 @@ const getBirthdays = async (req, res, next) => {
   console.log(dateObj);
 };
 
+const getUserFromJWT = async (req, res, next) => {
+  let token = req.headers.authorization;
+  console.log(token);
+  let user = jwt.verify(token, "Secret");
+  console.log(user);
+  const userFromDb = await User.findOne({ username: user.username })
+  console.log(userFromDb)
+  res.json({
+    status: "success",
+    data: userFromDb
+  });
+};
+
 module.exports.signup = signup;
 module.exports.login = login;
 module.exports.getAllUsers = getAllUsers;
 module.exports.getAllUsersWithBirthday = getAllUsersWithBirthday;
 module.exports.getBirthdays = getBirthdays;
+module.exports.getUserFromJWT = getUserFromJWT;
