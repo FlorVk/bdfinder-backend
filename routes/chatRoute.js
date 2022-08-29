@@ -9,4 +9,6 @@ router.get("/:birthday", function (req, res, next) {
 router.post("/sendMessage", chatController.sendMessage);
 router.get("/getMessages", chatController.getAllMessagesFromDb);
 
+router.get("/:birthday", chatController.getAllMessagesFromDb);
+
 module.exports = router;

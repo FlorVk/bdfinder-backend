@@ -1,5 +1,6 @@
 const User = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
+const config = require("config");
 
 const signup = async (req, res, next) => {
   let username = req.body.username;
@@ -29,7 +30,7 @@ const signup = async (req, res, next) => {
           uid: result._id,
           username: result.username,
         },
-        "Secret"
+        config.get('jwt.secret')
       );
 
       res.json({
@@ -61,7 +62,7 @@ const login = async (req, res, next) => {
           uid: result.user._id,
           username: result.user.username,
         },
-        "Secret"
+        config.get('jwt.secret')
       );
 
       return res.json({
@@ -122,7 +123,7 @@ const getBirthdays = async (req, res, next) => {
 const getUserFromJWT = async (req, res, next) => {
   let token = req.headers.authorization;
   console.log(token);
-  let user = jwt.verify(token, "Secret");
+  let user = jwt.verify(token, config.get('jwt.secret'));
   console.log(user);
   const userFromDb = await User.findOne({ username: user.username })
   console.log(userFromDb)

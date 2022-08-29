@@ -10,11 +10,12 @@ const usersRouter = require("./routes/usersRoute");
 const apiBdayRouter = require("./routes/api/v1/bday");
 const chatRouter = require("./routes/chatRoute");
 const passport = require("./passport/passport");
+const config = require('config');
 
 const mongoose = require("mongoose");
 try {
   mongoose.connect(
-    "mongodb+srv://admin:admin@bdayflor.llax4ck.mongodb.net/?retryWrites=true&w=majority",
+    config.get('Database.conn'),
     { useNewUrlParser: true, useUnifiedTopology: true },
     () => console.log(" Mongoose is connected")
   );
@@ -39,7 +40,6 @@ app.use(cors());
 app.use("/users", usersRouter);
 app.use(
   "/api/v1/bday",
-  passport.authenticate("jwt", { session: false }),
   apiBdayRouter
 );
 app.use("/auth", usersRouter);
